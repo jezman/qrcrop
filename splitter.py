@@ -17,7 +17,7 @@ def processingUploadFolder():
 
     for filename in files:
         splitFile(filename)
-        # os.remove(UPLOAD_PATH + '/' + filename)
+        os.remove(UPLOAD_PATH + '/' + filename)
 
     date = datetime.today().strftime('%d-%m-%Y-%m-%d-%H-%M')
     archivedName = '{}/Splitted_{}'.format(COMPRESSED_PATH, date)
