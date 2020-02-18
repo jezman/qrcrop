@@ -2,21 +2,33 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 from datetime import datetime
 import os
 import shutil
+from qrparse import create_csv
 
 UPLOAD_PATH = './originals'
 SPLITTED_PATH = './splitted'
 COMPRESSED_PATH = './compressed'
-QR_COUNT = 4
 
 
-def processingUploadFolder():
+def getCoordinations(vertical):
+    if vertical:
+        return {'x_left': 21, 'x_right': 119,
+                'y_top': 822, 'y_bottom': 652,
+                'qr_range': 186, 'orientation': 'vertical', 'qr_count': 4}
+    else:
+        return {'x_left': 21, 'x_right': 190,
+                'y_top': 822, 'y_bottom': 723,
+                'qr_range': 118, 'orientation': 'horizontal', 'qr_count': 6}
+
+
+def processingUploadFolder(orientation):
     files = [fl for fl in os.listdir(UPLOAD_PATH) if fl.endswith('.pdf')]
 
     checkPath(SPLITTED_PATH)
     checkPath(UPLOAD_PATH)
 
     for filename in files:
-        splitFile(filename)
+        create_csv(filename)
+        splitFile(filename, orientation)
         os.remove(UPLOAD_PATH + '/' + filename)
 
     date = datetime.today().strftime('%d-%m-%Y-%m-%d-%H-%M')
@@ -28,26 +40,25 @@ def processingUploadFolder():
     return '{}.zip'.format(archivedName)
 
 
-def splitFile(filename):
+def splitFile(filename, vertical):
     with open(UPLOAD_PATH + '/' + filename, 'rb') as in_f:
         input1 = PdfFileReader(in_f)
         input2 = PdfFileReader(in_f)
         input3 = PdfFileReader(in_f)
         input4 = PdfFileReader(in_f)
+        input5 = PdfFileReader(in_f)
+        input6 = PdfFileReader(in_f)
 
-        pdfObjects = [input1, input2, input3, input4]
+        pdfObjects = [input1, input2, input3, input4, input5, input6]
         pdfWriter = PdfFileWriter()
 
         numPages = PdfFileReader(in_f).numPages
 
         for page in range(numPages):
-            coordinates = {'x_left': 21, 'x_right': 119,
-                           'y_top': 822, 'y_bottom': 652,
-                           'qr_range': 186}
-
+            coordinates = getCoordinations(vertical)
             count = 0
 
-            while count < QR_COUNT:
+            while count < coordinates['qr_count']:
                 qrObj = getQR(pdfObjects[count], page, coordinates)
                 pdfWriter.addPage(qrObj)
 
