@@ -34,10 +34,19 @@ def upload_file():
         return redirect('/')
 
 
-@app.route('/return-files/')
-def return_files_tut():
+@app.route('/return-vertical-files/')
+def return_files_vertical():
     try:
-        archive = splitter.processingUploadFolder()
+        archive = splitter.processingUploadFolder(True)
+        return send_file(archive, as_attachment=True, cache_timeout=-1)
+    except Exception as e:
+        return str(e)
+
+
+@app.route('/return-horizontal-files/')
+def return_files_horizontal():
+    try:
+        archive = splitter.processingUploadFolder(False)
         return send_file(archive, as_attachment=True, cache_timeout=-1)
     except Exception as e:
         return str(e)
