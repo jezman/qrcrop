@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Generate codes</h2>
+<form method="post" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
+    <dl>
+		<p>
+			<input type="file" name="files[]" multiple="true" autocomplete="off" required>
+		</p>
+    	<p>
+			<input type="submit" value="Upload">
+		</p>
+    </dl>
+</form>
+
+<body class="body">
+	<div class="container" align="left">
+		<a href="{{ url_for('horizontal_split') }}"><button class='btn btn-default'>Horizontal split and Download</button></a>
+		<a href="{{ url_for('vertical_split') }}"><button class='btn btn-default'>Vertical split and Download</button></a>
+   </div>
+</body>
+
+{% endblock %}

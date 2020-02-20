@@ -3,10 +3,7 @@ from datetime import datetime
 import os
 import shutil
 from qrparse import create_csv
-
-UPLOAD_PATH = './originals'
-SPLITTED_PATH = './splitted'
-COMPRESSED_PATH = './compressed'
+from app import app
 
 
 def getCoordinations(vertical):
@@ -21,27 +18,27 @@ def getCoordinations(vertical):
 
 
 def processingUploadFolder(orientation):
-    files = [fl for fl in os.listdir(UPLOAD_PATH) if fl.endswith('.pdf')]
+    files = [fl for fl in os.listdir(app.config['UPLOAD_PATH']) if fl.endswith('.pdf')]
 
-    checkPath(SPLITTED_PATH)
-    checkPath(UPLOAD_PATH)
+    checkPath(app.config['SPLITTED_PATH'])
+    checkPath(app.config['UPLOAD_PATH'])
 
     for filename in files:
         create_csv(filename)
         splitFile(filename, orientation)
-        os.remove(UPLOAD_PATH + '/' + filename)
+        os.remove(os.path.join(app.config['UPLOAD_PATH'], filename))
 
     date = datetime.today().strftime('%d-%m-%Y-%m-%d-%H-%M')
-    archivedName = '{}/Splitted_{}'.format(COMPRESSED_PATH, date)
-    shutil.make_archive(archivedName, 'zip', SPLITTED_PATH)
-    shutil.rmtree(SPLITTED_PATH)
-    shutil.rmtree(UPLOAD_PATH)
+    archivedName = '{}/Splitted_{}'.format(app.config['COMPRESSED_PATH'], date)
+    shutil.make_archive(archivedName, 'zip', app.config['SPLITTED_PATH'])
+    shutil.rmtree(app.config['SPLITTED_PATH'])
+    shutil.rmtree(app.config['UPLOAD_PATH'])
 
     return '{}.zip'.format(archivedName)
 
 
 def splitFile(filename, vertical):
-    with open(UPLOAD_PATH + '/' + filename, 'rb') as in_f:
+    with open(os.path.join(app.config['UPLOAD_PATH'], filename), 'rb') as in_f:
         input1 = PdfFileReader(in_f)
         input2 = PdfFileReader(in_f)
         input3 = PdfFileReader(in_f)
@@ -67,7 +64,7 @@ def splitFile(filename, vertical):
 
                 count += 1
 
-        with open('{}/Splitted_{}'.format(SPLITTED_PATH, filename), 'wb') as out_f:
+        with open('{}/Splitted_{}'.format(app.config['SPLITTED_PATH'], filename), 'wb') as out_f:
             pdfWriter.write(out_f)
             print('Complete {}'.format(filename))
 
