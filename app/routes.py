@@ -42,8 +42,9 @@ def vertical_split():
     try:
         archive = splitter.processingUploadFolder(True)
         return send_file(archive, as_attachment=True, cache_timeout=-1)
-    except Exception as e:
-        return str(e)
+    except Exception:
+        flash('Please upload file')
+        return redirect('/')
 
 
 @app.route('/horizontal-split')
@@ -51,5 +52,6 @@ def horizontal_split():
     try:
         archive = splitter.processingUploadFolder(False)
         return send_file(archive, as_attachment=True, cache_timeout=-1)
-    except Exception as e:
-        return str(e)
+    except Exception:
+        flash('Please upload file')
+        return redirect('/')

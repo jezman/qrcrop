@@ -1,15 +1,7 @@
+from app import app
+import os
 import numpy as np
 import pdftotext
-
-UPLOAD_PATH = './originals'
-SPLITTED_PATH = './splitted'
-# symbols = {
-#     '&': '&amp',
-#     '\"': '&quot',
-#     '\'': '&apos',
-#     '>': '&gt',
-#     '<': '&lt',
-# }
 
 to_remove = ['МОДЕЛЬ', 'РАЗМЕР', '--', '']
 
@@ -27,10 +19,10 @@ def get_codes(pdf):
 
 
 def create_csv(pdf_file):
-    with open(UPLOAD_PATH + '/' + pdf_file, "rb") as f:
+    with open(os.path.join(app.config['UPLOAD_PATH'], pdf_file), "rb") as f:
         pdf = pdftotext.PDF(f)
         codes = get_codes(pdf)
         codes = [code.replace('"', '""') for code in codes]
         np.savetxt(
-            '{}/Splitted_{}.csv'.format(SPLITTED_PATH, pdf_file.split('.')[0]),
+            f"{app.config['SPLITTED_PATH']}/splitted_{pdf_file.split('.')[0]}",
             codes, fmt='"%s"', delimiter=",")

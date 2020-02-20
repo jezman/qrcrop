@@ -2,7 +2,7 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 from datetime import datetime
 import os
 import shutil
-from qrparse import create_csv
+from app import qrparser
 from app import app
 
 
@@ -24,7 +24,7 @@ def processingUploadFolder(orientation):
     checkPath(app.config['UPLOAD_PATH'])
 
     for filename in files:
-        create_csv(filename)
+        qrparser.create_csv(filename)
         splitFile(filename, orientation)
         os.remove(os.path.join(app.config['UPLOAD_PATH'], filename))
 
