@@ -1,23 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Generate codes</h2>
-<form method="post" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
-    <dl>
-		<p>
-			<input type="file" name="files[]" multiple="true" autocomplete="off" required>
-		</p>
-    	<p>
-			<input type="submit" value="Upload">
-		</p>
-    </dl>
-</form>
-
-<body class="body">
-	<div class="container" align="left">
-		<a href="{{ url_for('horizontal_split') }}"><button class='btn btn-default'>Horizontal split and Download</button></a>
-		<a href="{{ url_for('vertical_split') }}"><button class='btn btn-default'>Vertical split and Download</button></a>
-   </div>
-</body>
-
+	<h2>Generate codes</h2>
+    <form action="/generate-codes" method="post">
+        <p>
+            {{ form.count.label }}
+            {{ form.count(size=1) }}
+            {% for error in form.count.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.prefix.label }}
+            {{ form.prefix(size=20) }}
+            {% for error in form.prefix.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+		<p>{{ form.submit() }}</p>
+		{% if form.codes %}
+			{% for code in form.codes %}
+				<div><p>{{ code }}</b></p></div>
+  			{% endfor %}
+		{% endif %}
+    </form>
 {% endblock %}

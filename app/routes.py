@@ -4,6 +4,8 @@ from app import app
 from shutil import rmtree
 from flask import flash, request, redirect, render_template, send_file
 from werkzeug.utils import secure_filename
+from app.forms import GenerateCode
+from app.generator import get_codes
 
 
 def allowed_file(filename):
@@ -55,3 +57,15 @@ def horizontal_split():
     except Exception:
         flash('Please upload file')
         return redirect('/')
+
+@app.route('/generate-codes', methods=['GET', 'POST'])
+def generate_codes():
+    form = GenerateCode()
+
+    # if form.validate_on_submit():
+        # form.codes = get_codes(form.count.data, form.prefix.data)
+
+    if request.method == 'POST':
+        form.codes = get_codes(form.count.data, form.prefix.data)
+
+    return render_template('generator.html', title='Generate codes', form=form)
